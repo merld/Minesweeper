@@ -147,48 +147,7 @@ public class World {
 		item.checkFindMyself();
 	}
 	
-	/**
-	 * Insert a new Rock into the world at random.
-	 * @return the Rock.
-	 */
-	public Rock insertRockRandomly() {
-		Rock r = new Rock(this);
-		insertRandomly(r);
-		return r;
-	}
 	
-	/**
-	 * Insert a new Fish into the world at random of a specific color.
-	 * @param color - the color of the fish.
-	 * @return the new fish itself.
-	 */
-	public Fish insertFishRandomly(int color) {
-		Fish f = new Fish(color, this);
-		insertRandomly(f);
-		return f;
-	}
-	
-	public FishHome insertFishHome() {
-		FishHome home = new FishHome(this);
-		insertRandomly(home);
-		return home;
-	}
-	
-	public FallingRock insertFallingRockRandomly() {
-		FallingRock f =new FallingRock(this);
-		insertRandomly(f);
-		return f;
-	}
-	
-	/**
-	 * Insert a new Snail at random into the world.
-	 * @return the snail!
-	 */
-	public Snail insertSnailRandomly() {
-		Snail snail = new Snail(this);
-		insertRandomly(snail);
-		return snail;
-	}
 	
 	/**
 	 * Determine if a WorldObject can swim to a particular point.
@@ -208,15 +167,7 @@ public class World {
 		// We will need to look at who all is in the spot to determine if we can move there.
 		List<WorldObject> inSpot = this.find(x, y);
 		
-		//checks for obstacles
-		for (WorldObject it : inSpot) {
-			if(it instanceof Rock)
-				return false;
-			else if(it instanceof Fish &&!isPlayer)
-				return false;
-			else if (it instanceof Snail)
-				return false;
-		}
+		
 		
 		// If we didn't see an obstacle, we can move there!
 		return true;

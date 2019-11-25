@@ -47,16 +47,9 @@ public class FishGame {
 		player.setPosition(7, 7);
 		player.markAsPlayer();
 		world.register(player);
-		
-		
 	}
 	
-	
-	
 	public void step() {
-
-	
-		
 		// These are all the objects in the world in the same cell as the player.
 		List<WorldObject> overlap = this.player.findSameCell();
 		// The player is there, too, let's skip them.
@@ -66,7 +59,6 @@ public class FishGame {
 		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
-	
 	
 
 	/**
@@ -78,7 +70,6 @@ public class FishGame {
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
 		
-
 	}
 	
 	public boolean isValidIndex(int x, int y) {
@@ -141,8 +132,5 @@ public class FishGame {
 			}
 			System.out.println();
 		}
-		
-		
 	}
-	
 }

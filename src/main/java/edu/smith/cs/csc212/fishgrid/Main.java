@@ -169,14 +169,16 @@ public class Main extends GFX {
 			return;
 		}*/
 		
-
+		
+		
+		
 
 		// Read the state of the keyboard:
 		boolean up = this.processKey(KeyEvent.VK_W) || this.processKey(KeyEvent.VK_UP);
 		boolean down = this.processKey(KeyEvent.VK_S) || this.processKey(KeyEvent.VK_DOWN);
 		boolean left = this.processKey(KeyEvent.VK_A) || this.processKey(KeyEvent.VK_LEFT);
 		boolean right = this.processKey(KeyEvent.VK_D) || this.processKey(KeyEvent.VK_RIGHT);
-		boolean skip = this.processKey(KeyEvent.VK_SPACE);
+		boolean flag = this.processKey(KeyEvent.VK_F);
 
 		// Move the player if we can:
 		boolean moved = false;
@@ -189,11 +191,14 @@ public class Main extends GFX {
 		} else if (right) {
 			moved = this.game.player.moveRight();
 		}
+		/*else if(flag) {
+			//world object
+		}*/
 		
 		IntPoint click = mouseToGame(this.processClick());
 		
 		// Only advance the game if the player presses something!
-		if (skip || moved || click != null) {
+		if (moved || click != null) {
 			if (click != null) {
 				this.game.click(click.x, click.y);
 			}

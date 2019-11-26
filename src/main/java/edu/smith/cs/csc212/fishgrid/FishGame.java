@@ -2,6 +2,7 @@ package edu.smith.cs.csc212.fishgrid;
 
 import java.util.ArrayList;
 import java.util.List;
+import me.jjfoley.gfx.GFX;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,6 +37,8 @@ public class FishGame {
 	 * @param w how wide is the grid?
 	 * @param h how tall is the grid?
 	 */
+	
+	Flag f;
 	public FishGame(int w, int h) {
 		world = new World(w, h);
 		mines = new boolean[14][14];
@@ -46,6 +49,10 @@ public class FishGame {
 		// Start the player at "home".
 		player.setPosition(7, 7);
 		player.markAsPlayer();
+		
+		f=new Flag(world);
+		f.setPosition(3, 3);
+		world.register(f);
 		world.register(player);
 	}
 	
@@ -69,6 +76,9 @@ public class FishGame {
 	public void click(int x, int y) {
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
+		
+		
+		
 		
 	}
 	

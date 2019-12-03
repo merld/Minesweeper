@@ -45,6 +45,7 @@ public class Main extends GFX {
 	 */
 	Rectangle2D topRect;
 
+	Graphics2D g2;
 	/**
 	 * Construct a new fish game.
 	 */
@@ -91,6 +92,8 @@ public class Main extends GFX {
 		g.setColor(Color.green.darker().darker());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
+		
+		
 		// Get a a reference to the game world to draw.
 		World world = game.world;
 
@@ -116,6 +119,12 @@ public class Main extends GFX {
 				g.drawRect(x * tw, y * th, tw, th);
 			}
 		}
+		if(this.processKey(KeyEvent.VK_SPACE)) {
+			this.game.click(g);
+		}
+		if(this.processKey(KeyEvent.VK_F)) {
+			this.game.clickF(g);
+		}
 
 		// For everything in our world:
 		for (WorldObject wo : world.viewItems()) {
@@ -134,6 +143,13 @@ public class Main extends GFX {
 			g.setColor(new Color(0,1,0,0.5f));
 			g.fillRect(hover.x * tw, hover.y * th, tw, th);
 		}
+		g.setColor(Color.black);
+		if (this.processKey(KeyEvent.VK_SPACE)) {	
+				this.game.click(g);
+			
+		}
+		
+		
 	}
 	
 	/**
@@ -171,14 +187,13 @@ public class Main extends GFX {
 		
 		
 		
-		
 
 		// Read the state of the keyboard:
 		boolean up = this.processKey(KeyEvent.VK_W) || this.processKey(KeyEvent.VK_UP);
 		boolean down = this.processKey(KeyEvent.VK_S) || this.processKey(KeyEvent.VK_DOWN);
 		boolean left = this.processKey(KeyEvent.VK_A) || this.processKey(KeyEvent.VK_LEFT);
 		boolean right = this.processKey(KeyEvent.VK_D) || this.processKey(KeyEvent.VK_RIGHT);
-		boolean flag = this.processKey(KeyEvent.VK_F);
+		
 
 		// Move the player if we can:
 		boolean moved = false;
@@ -198,14 +213,11 @@ public class Main extends GFX {
 		IntPoint click = mouseToGame(this.processClick());
 		
 		// Only advance the game if the player presses something!
-		if (moved || click != null) {
-			if (click != null) {
-				this.game.click(click.x, click.y);
-			}
+		
 			// Update game logic!
 			this.game.step();
 			// Update message at the top!
-		}
+		
 	}
 
 	/**

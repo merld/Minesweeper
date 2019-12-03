@@ -1,5 +1,7 @@
 package edu.smith.cs.csc212.fishgrid;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import me.jjfoley.gfx.GFX;
@@ -19,41 +21,41 @@ public class FishGame {
 	/**
 	 * The player (a Fish.COLORS[0]-colored fish) goes seeking their friends.
 	 */
-	Fish player;
+	public Fish player;
 	/**
 	 * Score!
 	 */
 	int score;
+	
 	/**
-	 * 2D Array of booleans to hold mines
+	 * 2D array of squares
 	 */
-	boolean[][] mines;
-	/**
-	 * 2D Array of ints to determine how many mines coordinate touches
-	 */
-	int[][]mineNum;
+	Square[][] squares;
 	/**
 	 * Create a FishGame of a particular size.
 	 * @param w how wide is the grid?
 	 * @param h how tall is the grid?
 	 */
-	
-	Flag f;
+
 	public FishGame(int w, int h) {
 		world = new World(w, h);
-		mines = new boolean[14][14];
-		mineNum = new int[14][14];
-		initializeMines();
+		squares=new Square[14][14];
+		
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
 		// Start the player at "home".
 		player.setPosition(7, 7);
 		player.markAsPlayer();
-		
-		f=new Flag(world);
-		f.setPosition(3, 3);
-		world.register(f);
+
 		world.register(player);
+		for(int x=0; x<14;x++) {
+			for(int y=0; y<14; y++) {
+				squares[x][y]=new Square(world);
+				squares[x][y].setPosition(x, y);
+				world.register(squares[x][y]);
+			}
+		}
+		initializeMines();
 	}
 	
 	public void step() {
@@ -73,13 +75,21 @@ public class FishGame {
 	 * @param x - the x-tile.
 	 * @param y - the y-tile.
 	 */
-	public void click(int x, int y) {
-		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
-		List<WorldObject> atPoint = world.find(x, y);
-		
-		
-		
-		
+	public void click(Graphics2D g) {
+
+		if(squares[player.getX()][player.getY()].isMine==true) {
+			//end game
+		}
+		else {
+			squares[player.getX()][player.getY()].isVisible=true;
+			//g.drawString(""+(mineNum[player.getX()][player.getY()]),player.getX(),player.getY());
+		}
+	}
+	
+	public void clickF(Graphics2D g) {
+		Flag flag = new Flag(world);
+		flag.setPosition(player.getX(), player.getY());
+		world.register(flag);
 	}
 	
 	public boolean isValidIndex(int x, int y) {
@@ -97,8 +107,10 @@ public class FishGame {
 		while(mineCount<40) {
 			int x = (int) (Math.random()*14);
 			int y = (int)(Math.random()*14);
-			if(mines[x][y]==false) {
-				mines[x][y]=true;
+			if(x==7&&y==7)
+				continue;
+			if(squares[x][y].isMine==false) {
+				squares[x][y].isMine=true;
 				mineCount++;
 			}
 		}
@@ -106,28 +118,28 @@ public class FishGame {
 		for(int x=0; x<14;x++) {
 			for(int y=0; y<14;y++) {
 				int count=0;
-				if(isValidIndex(x-1,y-1)&&mines[x-1][y-1]==true)
+				if(isValidIndex(x-1,y-1)&&squares[x-1][y-1].isMine==true)
 					count++;
-				if(isValidIndex(x,y-1)&&mines[x][y-1]==true)
+				if(isValidIndex(x,y-1)&&squares[x][y-1].isMine==true)
 					count++;
-				if(isValidIndex(x+1,y-1)&&mines[x+1][y-1]==true)
+				if(isValidIndex(x+1,y-1)&&squares[x+1][y-1].isMine==true)
 					count++;
-				if(isValidIndex(x-1,y)&&mines[x-1][y]==true)
+				if(isValidIndex(x-1,y)&&squares[x-1][y].isMine==true)
 					count++;
-				if(isValidIndex(x+1,y)&&mines[x+1][y]==true)
+				if(isValidIndex(x+1,y)&&squares[x+1][y].isMine==true)
 					count++;
-				if(isValidIndex(x-1,y+1)&&mines[x-1][y+1]==true)
+				if(isValidIndex(x-1,y+1)&&squares[x-1][y+1].isMine==true)
 					count++;
-				if(isValidIndex(x,y+1)&&mines[x][y+1]==true)
+				if(isValidIndex(x,y+1)&&squares[x][y+1].isMine==true)
 					count++;
-				if(isValidIndex(x+1,y+1)&&mines[x+1][y+1]==true)
+				if(isValidIndex(x+1,y+1)&&squares[x+1][y+1].isMine==true)
 					count++;
-				mineNum[x][y]=count;
+				squares[x][y].mineNum=count;
 			}
 		}
 		for(int x=0; x<14;x++) {
 			for(int y=0; y<14;y++) {
-				if(mines[x][y]==true)
+				if(squares[y][x].isMine==true)
 					System.out.print("1");
 				else
 					System.out.print("0");
@@ -138,9 +150,14 @@ public class FishGame {
 		System.out.println();
 		for(int x=0; x<14;x++) {
 			for(int y=0; y<14;y++) {
-				System.out.print(mineNum[x][y]+" ");
+				System.out.print(squares[y][x].mineNum+" ");
 			}
 			System.out.println();
 		}
 	}
+	
+	
+	
+	
+	
 }

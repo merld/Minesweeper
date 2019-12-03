@@ -33,7 +33,7 @@ public class Flag extends WorldObject{
 		
 		scale.drawPolygon(triangle);
 		scale.fillPolygon(triangle);
-		//g.dispose();
+
 	}
 	
 	

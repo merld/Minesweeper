@@ -1,12 +1,10 @@
 package edu.smith.cs.csc212.fishgrid;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.awt.Rectangle;
 import java.util.List;
-import me.jjfoley.gfx.GFX;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+
+import me.jjfoley.gfx.TextBox;
 
 /**
  * This class manages our model of gameplay: missing and found fish, etc.
@@ -76,9 +74,11 @@ public class FishGame {
 	 * @param y - the y-tile.
 	 */
 	public void click(Graphics2D g) {
-
-		if(squares[player.getX()][player.getY()].isMine==true) {
-			//end game
+		if(squares[player.getX()][player.getY()].isMine) {
+			squares[player.getX()][player.getY()].isVisible=true;
+		}
+		else if(squares[player.getX()][player.getY()].mineNum==0) {
+			clearSquares(player.getX(),player.getY());
 		}
 		else {
 			squares[player.getX()][player.getY()].isVisible=true;
@@ -96,6 +96,18 @@ public class FishGame {
 		if(x<0||x>13||y<0||y>13)
 			return false;
 		return true;
+	}
+	
+	
+	/**
+	 * This method is how the Main app tells whether we're done.
+	 * @return true if the player has won (or maybe lost?).
+	 */
+	public boolean gameOver() {
+		//Makes sure all fish are home before the win
+		if(squares[player.getX()][player.getY()].isMine==true&&squares[player.getX()][player.getY()].isVisible==true)
+			return true;
+		return false;
 	}
 	
 	/**
@@ -154,6 +166,70 @@ public class FishGame {
 			}
 			System.out.println();
 		}
+	}
+	
+	public void clearSquares(int x, int y) {
+		if(squares[x][y].mineNum>0) {
+			return;
+		}
+		else {
+			if(isValidIndex(x,y-1)&&squares[x][y-1].isVisible==false){
+				squares[x][y-1].isVisible=true;
+				clearSquares(x,y-1);
+			}	
+			if(isValidIndex(x-1,y-1)&&squares[x-1][y-1].isVisible==false){
+				squares[x-1][y-1].isVisible=true;
+				clearSquares(x-1,y-1);
+			}
+			if(isValidIndex(x+1,y-1)&&squares[x+1][y-1].isVisible==false){
+				squares[x+1][y-1].isVisible=true;
+				clearSquares(x+1,y-1);
+			}
+			if(isValidIndex(x-1,y)&&squares[x-1][y].isVisible==false){
+				squares[x-1][y].isVisible=true;
+				clearSquares(x-1,y);
+			}	
+			if(isValidIndex(x+1,y)&&squares[x+1][y].isVisible==false){
+				squares[x+1][y].isVisible=true;
+				clearSquares(x+1,y);
+			}	
+			if(isValidIndex(x-1,y+1)&&squares[x-1][y+1].isVisible==false){
+				squares[x-1][y+1].isVisible=true;
+				clearSquares(x-1,y+1);
+			}
+			if(isValidIndex(x+1,y+1)&&squares[x+1][y+11].isVisible==false){
+				squares[x+1][y+1].isVisible=true;
+				clearSquares(x+1,y+1);
+			}
+			if(isValidIndex(x,y+1)&&squares[x][y+1].isVisible==false){
+				squares[x][y+1].isVisible=true;
+				clearSquares(x,y+1);
+			}
+		}
+			
+	}
+	
+	public Square[] checkSurrounding(int x, int y) {
+		Square[] ret = new Square[4];
+		int count=0;
+		if(isValidIndex(x,y-1)&&squares[x][y-1].mineNum==0){
+			ret[count]=squares[x][y-1];
+			count++;
+		}	
+		if(isValidIndex(x-1,y)&&squares[x-1][y].mineNum==0){
+			ret[count]=squares[x-1][y];
+			count++;
+		}	
+		if(isValidIndex(x+1,y)&&squares[x+1][y].mineNum==0){
+			ret[count]=squares[x+1][y];
+			count++;
+		}	
+
+		if(isValidIndex(x,y+1)&&squares[x][y+1].mineNum==0){
+			ret[count]=squares[x][y+1];
+			count++;
+		}
+		return ret;
 	}
 	
 	

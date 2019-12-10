@@ -40,6 +40,9 @@ public class Main extends GFX {
 	 * This TextBox wraps up making fonts and centering text.
 	 */
 	TextBox gameState = new TextBox("");
+	
+	TextBox flagNum = new TextBox("");
+
 	/**
 	 * This is a rectangle representing the TOP_PART of the screen.
 	 */
@@ -55,6 +58,9 @@ public class Main extends GFX {
 		gameState.color = Color.WHITE;
 		gameState.setFont(TextBox.BOLD_FONT);
 		gameState.setFontSize(TOP_PART / 3.0);
+		flagNum.color = Color.WHITE;
+		flagNum.setFont(TextBox.BOLD_FONT);
+		flagNum.setFontSize(TOP_PART / 3.0);
 		topRect = new Rectangle2D.Double(0, 0, getWidth(), TOP_PART);
 	}
 
@@ -99,7 +105,12 @@ public class Main extends GFX {
 
 		// Draw TOP_PART TextBox.
 		this.gameState.centerInside(this.topRect);
-		this.gameState.draw(g);
+		if(game.gameOver()==0||game.gameOver()==1)
+			this.gameState.draw(g);
+		
+		this.flagNum.centerInside(this.topRect);
+		if(game.gameOver()==-1)
+			this.flagNum.draw(g);
 
 		// Slide the world down, and into the box.
 		// This makes our rendering of the board easier.
@@ -177,13 +188,18 @@ public class Main extends GFX {
 	@Override
 	public void update(double secondsSinceLastUpdate) {
 		// Handle game-over and restart.
-		if (game.gameOver()) {
-			this.gameState.setString("Game Over! Click anywhere start again!");
+		if (game.gameOver()>=0) {
+			if(game.gameOver()==0)
+				this.gameState.setString("Congrats! You win! Click anywhere start again!");
+			else{
+				this.gameState.setString("You lose. Click anywhere start again!");
+			}
 			if (this.processClick() != null) {
 				this.game = new FishGame(LOGICAL_GRID_SIZE, LOGICAL_GRID_SIZE);
 			}
 			return;
 		}
+		this.flagNum.setString("Flags left: "+game.flagsLeft);
 		
 		
 		

@@ -20,10 +20,6 @@ public class FishGame {
 	 * The player (a Fish.COLORS[0]-colored fish) goes seeking their friends.
 	 */
 	public Fish player;
-	/**
-	 * Score!
-	 */
-	int score;
 	
 	/**
 	 * 2D array of squares
@@ -34,11 +30,15 @@ public class FishGame {
 	 * @param w how wide is the grid?
 	 * @param h how tall is the grid?
 	 */
+	
+	int flagsLeft;
+	int correctFlags;
 
 	public FishGame(int w, int h) {
 		world = new World(w, h);
 		squares=new Square[14][14];
-		
+		flagsLeft=40;
+		correctFlags=0;
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
 		// Start the player at "home".
@@ -82,7 +82,6 @@ public class FishGame {
 		}
 		else {
 			squares[player.getX()][player.getY()].isVisible=true;
-			//g.drawString(""+(mineNum[player.getX()][player.getY()]),player.getX(),player.getY());
 		}
 	}
 	
@@ -90,6 +89,9 @@ public class FishGame {
 		Flag flag = new Flag(world);
 		flag.setPosition(player.getX(), player.getY());
 		world.register(flag);
+		flagsLeft--;
+		if(squares[player.getX()][player.getY()].isMine)
+			correctFlags++;
 	}
 	
 	public boolean isValidIndex(int x, int y) {
@@ -103,11 +105,12 @@ public class FishGame {
 	 * This method is how the Main app tells whether we're done.
 	 * @return true if the player has won (or maybe lost?).
 	 */
-	public boolean gameOver() {
-		//Makes sure all fish are home before the win
+	public int gameOver() {
 		if(squares[player.getX()][player.getY()].isMine==true&&squares[player.getX()][player.getY()].isVisible==true)
-			return true;
-		return false;
+			return 1;
+		else if(flagsLeft==0&&correctFlags==40)
+			return 0;
+		return -1;
 	}
 	
 	/**
@@ -119,7 +122,7 @@ public class FishGame {
 		while(mineCount<40) {
 			int x = (int) (Math.random()*14);
 			int y = (int)(Math.random()*14);
-			if(x==7&&y==7)
+			if(x>5&&x<9&&y>5&&y<9)
 				continue;
 			if(squares[x][y].isMine==false) {
 				squares[x][y].isMine=true;
@@ -197,7 +200,7 @@ public class FishGame {
 				squares[x-1][y+1].isVisible=true;
 				clearSquares(x-1,y+1);
 			}
-			if(isValidIndex(x+1,y+1)&&squares[x+1][y+11].isVisible==false){
+			if(isValidIndex(x+1,y+1)&&squares[x+1][y+1].isVisible==false){
 				squares[x+1][y+1].isVisible=true;
 				clearSquares(x+1,y+1);
 			}

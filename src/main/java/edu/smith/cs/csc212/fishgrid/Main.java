@@ -42,6 +42,9 @@ public class Main extends GFX {
 	TextBox gameState = new TextBox("");
 	
 	TextBox flagNum = new TextBox("");
+	
+	
+	boolean firstClick=true;
 
 	/**
 	 * This is a rectangle representing the TOP_PART of the screen.
@@ -131,6 +134,10 @@ public class Main extends GFX {
 			}
 		}
 		if(this.processKey(KeyEvent.VK_SPACE)) {
+			if(firstClick) {
+				game.initializeMines();
+				firstClick=false;
+			}
 			this.game.click(g);
 		}
 		if(this.processKey(KeyEvent.VK_F)) {
@@ -196,6 +203,7 @@ public class Main extends GFX {
 			}
 			if (this.processClick() != null) {
 				this.game = new FishGame(LOGICAL_GRID_SIZE, LOGICAL_GRID_SIZE);
+				firstClick=true;
 			}
 			return;
 		}

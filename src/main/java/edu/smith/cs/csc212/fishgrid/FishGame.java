@@ -30,22 +30,27 @@ public class FishGame {
 	 * @param w how wide is the grid?
 	 * @param h how tall is the grid?
 	 */
-	
+	//starts at 40 and keeps track of flags placed
 	int flagsLeft;
+	//keeps track of number of flags placed on mines
 	int correctFlags;
+
 
 	public FishGame(int w, int h) {
 		world = new World(w, h);
+		//2D array matches size of playing grid
 		squares=new Square[14][14];
 		flagsLeft=40;
 		correctFlags=0;
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
-		// Start the player at "home".
+		// Start the player at the middle.
 		player.setPosition(7, 7);
 		player.markAsPlayer();
 
 		world.register(player);
+		
+		//register all of the Squares in squares
 		for(int x=0; x<14;x++) {
 			for(int y=0; y<14; y++) {
 				squares[x][y]=new Square(world);
@@ -53,17 +58,10 @@ public class FishGame {
 				world.register(squares[x][y]);
 			}
 		}
-		initializeMines();
 	}
 	
+	//Makes player move
 	public void step() {
-		// These are all the objects in the world in the same cell as the player.
-		List<WorldObject> overlap = this.player.findSameCell();
-		// The player is there, too, let's skip them.
-		overlap.remove(this.player);
-		
-		
-		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
 	
@@ -74,26 +72,54 @@ public class FishGame {
 	 * @param y - the y-tile.
 	 */
 	public void click(Graphics2D g) {
-		if(squares[player.getX()][player.getY()].isMine) {
+		//is there a flag in the clicked space?
+		boolean foo = false;
+		
+		//Searches for flag in player's cell and updates if necessary
+		for(WorldObject wo: player.findSameCell()) {
+			if(wo instanceof Flag)
+				foo=true;
+		}
+		//Shows mine if isMine and not flagged
+		if(squares[player.getX()][player.getY()].isMine&&!foo) {
 			squares[player.getX()][player.getY()].isVisible=true;
 		}
-		else if(squares[player.getX()][player.getY()].mineNum==0) {
+		//Causes the flood method if mineNum is 0 and is not flagged
+		else if(squares[player.getX()][player.getY()].mineNum==0&&!foo) {
 			clearSquares(player.getX(),player.getY());
 		}
-		else {
+		//Shows the minNum if not flagged
+		else if(!foo) {
 			squares[player.getX()][player.getY()].isVisible=true;
 		}
 	}
 	
 	public void clickF(Graphics2D g) {
-		Flag flag = new Flag(world);
-		flag.setPosition(player.getX(), player.getY());
-		world.register(flag);
-		flagsLeft--;
-		if(squares[player.getX()][player.getY()].isMine)
-			correctFlags++;
+		//Shows if there is already a flag there
+		boolean remove = false;
+		//Checks if there is a flag in the same cell, removes it if there is
+		for(WorldObject w: this.player.findSameCell()) {
+			if(w instanceof Flag) {
+				world.remove(w);
+				remove=true;
+				flagsLeft++;
+				if(squares[player.getX()][player.getY()].isMine)
+					correctFlags--;
+				break;
+			}
+		}
+		//Creates a flag where there wasn't one
+		if(!remove) {
+			Flag flag = new Flag(world);
+			flag.setPosition(player.getX(), player.getY());
+			world.register(flag);
+			flagsLeft--;
+			if(squares[player.getX()][player.getY()].isMine)
+				correctFlags++;
+		}
 	}
 	
+	//Checks to make sure index is in bounds
 	public boolean isValidIndex(int x, int y) {
 		if(x<0||x>13||y<0||y>13)
 			return false;
@@ -122,7 +148,7 @@ public class FishGame {
 		while(mineCount<40) {
 			int x = (int) (Math.random()*14);
 			int y = (int)(Math.random()*14);
-			if(x>5&&x<9&&y>5&&y<9)
+			if(x>player.getX()-2&&x<player.getX()+2&&y>player.getY()-2&&y<player.getY()+2)
 				continue;
 			if(squares[x][y].isMine==false) {
 				squares[x][y].isMine=true;
@@ -152,6 +178,8 @@ public class FishGame {
 				squares[x][y].mineNum=count;
 			}
 		}
+		/* Print statements to debug. Prints where mines are and mineNums
+		 * 
 		for(int x=0; x<14;x++) {
 			for(int y=0; y<14;y++) {
 				if(squares[y][x].isMine==true)
@@ -168,10 +196,12 @@ public class FishGame {
 				System.out.print(squares[y][x].mineNum+" ");
 			}
 			System.out.println();
-		}
+		}*/
 	}
 	
+	//FLood method. Checks every adjacent square's mineNum and recurses through them
 	public void clearSquares(int x, int y) {
+		squares[x][y].isVisible=true;
 		if(squares[x][y].mineNum>0) {
 			return;
 		}
@@ -211,32 +241,4 @@ public class FishGame {
 		}
 			
 	}
-	
-	public Square[] checkSurrounding(int x, int y) {
-		Square[] ret = new Square[4];
-		int count=0;
-		if(isValidIndex(x,y-1)&&squares[x][y-1].mineNum==0){
-			ret[count]=squares[x][y-1];
-			count++;
-		}	
-		if(isValidIndex(x-1,y)&&squares[x-1][y].mineNum==0){
-			ret[count]=squares[x-1][y];
-			count++;
-		}	
-		if(isValidIndex(x+1,y)&&squares[x+1][y].mineNum==0){
-			ret[count]=squares[x+1][y];
-			count++;
-		}	
-
-		if(isValidIndex(x,y+1)&&squares[x][y+1].mineNum==0){
-			ret[count]=squares[x][y+1];
-			count++;
-		}
-		return ret;
-	}
-	
-	
-	
-	
-	
 }

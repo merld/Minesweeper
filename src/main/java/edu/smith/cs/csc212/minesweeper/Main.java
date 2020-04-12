@@ -1,4 +1,5 @@
-package edu.smith.cs.csc212.fishgrid;
+package edu.smith.cs.csc212.minesweeper;
+
 
 import java.awt.Color;
 import java.awt.Graphics2D;

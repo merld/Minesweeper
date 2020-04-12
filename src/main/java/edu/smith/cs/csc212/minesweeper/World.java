@@ -1,4 +1,4 @@
-package edu.smith.cs.csc212.fishgrid;
+package edu.smith.cs.csc212.minesweeper;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
